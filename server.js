@@ -2,7 +2,9 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+var p2p = require('socket.io-p2p-server').Server;
 
+io.use(p2p);
 const path = require('path');
 
 app.use(express.static('public'));

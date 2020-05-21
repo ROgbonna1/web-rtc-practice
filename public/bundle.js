@@ -4,10 +4,15 @@ var io = require('socket.io-client');
 const SimplePeer = require('simple-peer')
 
 var socket = io();
+var p2p = new P2P(socket, _, () => console.log('Peers!'));
+
+p2p.on('peer-msg', function (data) {
+  console.log('From a peer %s', data);
+});
 
 console.log({socket})
 
-socket.on('event', (data) => {
+socket.on('server-event', (data) => {
   console.log(data);
   socket.emit('response-event', 'This thing works.');
 });
@@ -15,6 +20,7 @@ socket.on('event', (data) => {
 const form = document.querySelector('form');
 
 form.addEventListener('submit', (e) => {
+  console.log('xxxxx')
   e.preventDefault();
   const text = e.target[0].value;
   console.log(text);
