@@ -1,18 +1,14 @@
 <html>
   <body>
-    <style>
-      #outgoing {
-        width: 600px;
-        word-wrap: break-word;
-        white-space: normal;
-      }
-    </style>
-    <form>
-      <textarea id="incoming"></textarea>
-      <button type="submit">submit</button>
-    </form>
-    <pre id="outgoing"></pre>
-    <video width="500"></video>
+    <button>Call Partner</button>
+    <div>
+      <h3>Your video</h3>
+      <video id="video1" width="500" autoplay muted></video>
+    </div>
+    <div>
+      <h3>Partner's Video</h3>
+      <video id="video2" width="500" autoplay></video>
+    </div>
     <script src="bundle.js"></script>
   </body>
 </html>

@@ -1,36 +1,50 @@
-var P2P = require('socket.io-p2p');
-var io = require('socket.io-client');
+const io = require('socket.io-client');
 const SimplePeer = require('simple-peer')
 
-var socket = io();
-var opts = {autoUpgrade: true, numClients: 2}
-var p2p = new P2P(socket, opts, () => console.log('Peers!'));
-console.log('CONNECTED TO CLIENT SIDE JAVASCRIPT')
-
-p2p.on('peer-msg', function (data) {
-  console.log('From a peer %s', data);
-});
+const socket = io();
 
 console.log({socket})
 
-socket.on('server-event', (data) => {
-  console.log(data);
-  socket.emit('response-event', 'This thing works.');
-});
+navigator.mediaDevices.getUserMedia({
+  video: true,
+  audio: true
+}).then(gotMedia).catch(() => {})
 
-const form = document.querySelector('form');
+function gotMedia(stream) {
+  const yourVideo = document.querySelector('#video1');
+  const peerVideo = document.querySelector('#video2');
 
-form.addEventListener('submit', (e) => {
-  console.log('xxxxx')
-  e.preventDefault();
-  const text = e.target[0].value;
-  // console.log(text);
-  socket.emit('peer-msg', text);
-})
-// navigator.mediaDevices.getUserMedia({
-//   video: true,
-//   audio: true
-// }).then(gotMedia).catch(() => {})
+  yourVideo.srcObject = stream;
+
+  const peer = new SimplePeer({
+    initiator: window.location.hash === '#1',
+    trickle: false, 
+    stream: stream,
+  });
+
+  peer.on('signal', (data) => {
+    console.log('Just sent data: ', data)
+    socket.emit('signal', data)
+  });
+
+  socket.on('signal', (data) => {
+    console.log('I just received data: ', data);
+    peer.signal(data);
+  });
+
+  peer.on('stream', stream => {
+    console.log('Stream locked in...');
+    const video = document.querySelector('video')
+
+    if ('srcObject' in video) {
+      peerVideo.srcObject = stream
+    } else {
+      peerVideo.src = window.URL.createObjectURL(stream) // for older browsers
+    }
+  });
+}
+
+
 
 // function gotMedia(stream) {
 //   var opts = {autoUpgrade: false, numClients: 10};
@@ -58,15 +72,3 @@ form.addEventListener('submit', (e) => {
 //   p.on('signal', data => {
 //     console.log('I just signaled: ', data)
 //   });
-
-//   p.on('stream', stream => {
-//     console.log('Stream locked in...');
-//     var video = document.querySelector('video')
-
-//     if ('srcObject' in video) {
-//       video.srcObject = stream
-//     } else {
-//       video.src = window.URL.createObjectURL(stream) // for older browsers
-//     }
-//   });
-// }
