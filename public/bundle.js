@@ -4,7 +4,9 @@ var io = require('socket.io-client');
 const SimplePeer = require('simple-peer')
 
 var socket = io();
-var p2p = new P2P(socket, _, () => console.log('Peers!'));
+var opts = {autoUpgrade: true, numClients: 2}
+var p2p = new P2P(socket, opts, () => console.log('Peers!'));
+console.log('CONNECTED TO CLIENT SIDE JAVASCRIPT')
 
 p2p.on('peer-msg', function (data) {
   console.log('From a peer %s', data);
@@ -23,8 +25,8 @@ form.addEventListener('submit', (e) => {
   console.log('xxxxx')
   e.preventDefault();
   const text = e.target[0].value;
-  console.log(text);
-  socket.emit('client-event', text);
+  // console.log(text);
+  socket.emit('peer-msg', text);
 })
 // navigator.mediaDevices.getUserMedia({
 //   video: true,

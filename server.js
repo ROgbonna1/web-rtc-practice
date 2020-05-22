@@ -14,8 +14,12 @@ app.get('/', (_, res) => res.sendFile(path.join(__dirname, 'index.html')));
 server.listen(3030, () => console.log('running...'));
 
 io.on('connection', (socket) => {
-  socket.emit('server-event', "I'm connected!");
-  socket.on('client-event', (data) => {
-    console.log(data);
+  socket.on('peer-msg', (data) => {
+    console.log('Message from peer: %s', data);
+    socket.broadcast.emit('peer-msg', data)
+  });
+
+  socket.on('go-private', (data) => {
+    socket.broadcast.emit('go-private', data)
   });
 });
