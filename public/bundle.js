@@ -3,14 +3,14 @@ const io = require('socket.io-client');
 const SimplePeer = require('simple-peer')
 
 const socket = io();
+socket.emit('my-room', 'games')
 
-const button = document.querySelector('button');
-button.addEventListener('click', () => {
-  navigator.mediaDevices.getUserMedia({
-    video: true,
-    audio: true
-  }).then(gotMedia).catch(() => {})
-});
+console.log({socket})
+
+navigator.mediaDevices.getUserMedia({
+  video: true,
+  audio: true
+}).then(gotMedia).catch(() => {})
 
 function gotMedia(stream) {
   const yourVideo = document.querySelector('#video1');
@@ -19,7 +19,7 @@ function gotMedia(stream) {
   yourVideo.srcObject = stream;
 
   const peer = new SimplePeer({
-    initiator: false,
+    initiator: window.location.hash === '#1',
     trickle: false, 
     stream: stream,
   });
@@ -36,7 +36,7 @@ function gotMedia(stream) {
 
   peer.on('stream', stream => {
     console.log('Stream locked in...');
-    var video = document.querySelector('video')
+    const video = document.querySelector('video')
 
     if ('srcObject' in video) {
       peerVideo.srcObject = stream

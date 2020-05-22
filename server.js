@@ -13,9 +13,14 @@ server.listen(3030, () => console.log('running...'));
 
 io.on('connection', (socket) => {
 
+  socket.on('my-room', (room) => {
+    socket.room = room;
+    socket.join(room)
+  });
+
   socket.on('signal', (data) => {
     console.log('Signal from peer: ', socket.id);
-    socket.broadcast.emit('signal', data)
+    io.to(socket.room).emit('signal', data)
   });
 
 });

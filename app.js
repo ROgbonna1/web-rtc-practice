@@ -2,6 +2,7 @@ const io = require('socket.io-client');
 const SimplePeer = require('simple-peer')
 
 const socket = io();
+socket.emit('my-room', 'games')
 
 console.log({socket})
 
